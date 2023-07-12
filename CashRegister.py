@@ -76,7 +76,6 @@ itemTreeView.heading("priceVes", text = "Precio (VES)")
 
 for itemId in itemDict:
 	itemTreeView.insert("", "end", values = (itemDict[itemId].id, itemDict[itemId].description, '{:.2f}'.format(itemDict[itemId].price), '{:.2f}'.format(itemDict[itemId].price * usdToVes)))
-itemTreeView.grid()
 
 
 #Order List
@@ -106,10 +105,10 @@ orderTreeView.heading("description", text = "Descripción")
 orderTreeView.heading("priceUsd", text = "Precio (USD)")
 orderTreeView.heading("priceVes", text = "Precio (VES)")
 
+
+
+
 #Search bar
-def updateSubtotal():
-
-
 orderIdVar = tk.StringVar()
 
 # orderListId = 0
@@ -129,31 +128,55 @@ def addItemToOrder(self):
 												'{:.2f}'.format(itemDict[orderIdVar.get()].price),
 												'{:.2f}'.format(itemDict[orderIdVar.get()].price * usdToVes)))
 		# orderTreeView.insert("", "end", values = (itemDict[orderIdVar.get()].description, 1, '{:.2f}'.format(itemDict[orderIdVar.get()].price), '{:.2f}'.format(itemDict[orderIdVar.get()].price), '{:.2f}'.format(itemDict[orderIdVar.get()].price * usdToVes)))
+	updateSubtotal()
 
+#Total
+subtotalAmountLabel = tk.Label(orderTab, text = f"Subtotal:\t\t{0:.2f}\t{0:.2f}")
+
+def updateSubtotal():
+	subtotalAmount = 0
+	for order in orderTreeView.get_children():
+		subtotalAmount += float(orderTreeView.item(order, "values")[2])
+		# print(orderTreeView.item(order, "values"))
+
+
+	# print(subtotalAmount)
+	subtotalAmountLabel.config(text = f"Subtotal:\t\t{subtotalAmount:.2f}\t{subtotalAmount*usdToVes:.2f}")
+# subtotalTextLabel = tk.Label(orderTab, text = 'aaaaaaaaaaaaaaa:\t\t{:.2f}'.format(0))
 
 
 orderEntry = tk.Entry(orderTab, textvariable = orderIdVar)
 orderEntry.bind('<Return>', addItemToOrder)
 orderEntry.bind('<KP_Enter>', addItemToOrder)
-orderEntry.grid(sticky='ew')
 
-orderTreeView.grid(sticky="ew")
 
 #Buttons
 def removeSelectedItems():
 	for order in orderTreeView.selection():
-		print(orderTreeView.item(order, "values"))
+		# print(orderTreeView.item(order, "values"))
 
 		orderTreeView.delete(order)
 		# print(self.tree.identify(event.x,event.y))
 
 removeSelectedItemsButton = tk.Button(orderTab, text = "Remover Selección", command = removeSelectedItems)
-removeSelectedItemsButton.grid()
 
 def removeAllItems():
 	for order in orderTreeView.get_children():
 		orderTreeView.delete(order)
 removeAllItemsButton = tk.Button(orderTab, text = "Remover Todo", command = removeAllItems)
+
+
+#Grid
+itemTreeView.grid()
+orderEntry.grid(sticky = 'ew')
+orderTreeView.grid(sticky = "ew")
+# subtotalTextLabel.grid(sticky = "e", row=2)
+subtotalAmountLabel.grid(sticky = "e")
+# subtotalTextLabel.grid(sticky = "e", column = 0, row=2)
+# subtotalTextLabel.grid(padx=10, column = 0, row=10)
+
+removeSelectedItemsButton.grid()
+
 removeAllItemsButton.grid()
 
 
